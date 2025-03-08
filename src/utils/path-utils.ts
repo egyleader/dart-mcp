@@ -2,19 +2,20 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 
-// Known project roots to check when resolving paths
-const PROJECT_ROOTS: string[] = [
-  '/Users/egyleader/dev/_dkilo/dkilo-advertise',
-  // Add other project roots as needed
-];
+// Dynamic collection of project roots to check when resolving paths
+const PROJECT_ROOTS: string[] = [];
 
 /**
  * Add a project root to the list of known project roots
  * @param root The project root to add
  */
 export function addProjectRoot(root: string): void {
-  if (!PROJECT_ROOTS.includes(root)) {
-    console.log(`Adding project root: ${root}`);
+  if (root && !PROJECT_ROOTS.includes(root)) {
+    // Only log in verbose mode to avoid cluttering stdout/stderr
+    // which is used for MCP communication
+    if (process.env.DART_MCP_VERBOSE) {
+      console.error(`[dart-mcp] Adding project root: ${root}`);
+    }
     PROJECT_ROOTS.push(root);
   }
 }

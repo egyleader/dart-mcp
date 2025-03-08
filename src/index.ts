@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
@@ -42,8 +44,13 @@ server.tool('dart-test', testSchema.shape, test);
 // Function to detect common project roots
 function detectProjectRoots() {
   try {
+    // Always add the current working directory as a project root
+    const cwd = process.cwd();
+    addProjectRoot(cwd);
+    
     // Common directories to check for projects
     const commonDirs = [
+      cwd,
       path.join(os.homedir(), 'dev'),
       path.join(os.homedir(), 'projects'),
       path.join(os.homedir(), 'workspace'),
@@ -51,63 +58,66 @@ function detectProjectRoots() {
       path.join(os.homedir(), 'src')
     ];
     
-    console.error('Detecting project roots...');
+    if (process.env.DART_MCP_VERBOSE) {
+      console.error('[dart-mcp] Detecting project roots...');
+    }
     
-    // Check each common directory
+    // Try to detect Flutter/Dart projects by looking for pubspec.yaml files
     for (const dir of commonDirs) {
       if (fs.existsSync(dir)) {
         try {
-          // Get all subdirectories in the common directory
+          // Check if the directory itself is a Dart project
+          if (fs.existsSync(path.join(dir, 'pubspec.yaml'))) {
+            addProjectRoot(dir);
+          }
+          
+          // Get immediate subdirectories
           const subdirs = fs.readdirSync(dir, { withFileTypes: true })
             .filter(dirent => dirent.isDirectory())
             .map(dirent => path.join(dir, dirent.name));
           
-          // Add each subdirectory as a potential project root
+          // Check each subdirectory for Dart/Flutter project indicators
           for (const subdir of subdirs) {
-            addProjectRoot(subdir);
-            
-            // Check for nested projects (e.g., monorepos)
-            try {
-              const nestedDirs = fs.readdirSync(subdir, { withFileTypes: true })
-                .filter(dirent => dirent.isDirectory())
-                .map(dirent => path.join(subdir, dirent.name));
-              
-              for (const nestedDir of nestedDirs) {
-                // Check if this looks like a project directory (has pubspec.yaml, package.json, etc.)
-                const hasPubspec = fs.existsSync(path.join(nestedDir, 'pubspec.yaml'));
-                const hasPackageJson = fs.existsSync(path.join(nestedDir, 'package.json'));
-                
-                if (hasPubspec || hasPackageJson) {
-                  addProjectRoot(nestedDir);
-                }
-              }
-            } catch (err) {
-              // Ignore errors when reading nested directories
+            if (fs.existsSync(path.join(subdir, 'pubspec.yaml'))) {
+              addProjectRoot(subdir);
             }
           }
         } catch (err) {
-          console.error(`Error reading directory ${dir}:`, err);
+          // Silently ignore errors when reading directories
+          // This is important for a distributable package to avoid stderr output
         }
       }
     }
   } catch (err) {
-    console.error('Error detecting project roots:', err);
+    // Only log in verbose mode
+    if (process.env.DART_MCP_VERBOSE) {
+      console.error('[dart-mcp] Error detecting project roots:', err);
+    }
   }
 }
 
 // Start server with stdio transport
 async function startServer() {
   try {
-    console.error('Starting Dart MCP Server...');
+    // Only log in verbose mode to avoid cluttering stderr
+    // which is used for MCP communication
+    if (process.env.DART_MCP_VERBOSE) {
+      console.error('[dart-mcp] Starting server...');
+    }
     
     // Detect project roots
     detectProjectRoots();
     
+    // Connect to stdio transport
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error('Dart MCP Server started and connected to stdio transport');
+    
+    if (process.env.DART_MCP_VERBOSE) {
+      console.error('[dart-mcp] Server started and connected to stdio transport');
+    }
   } catch (error) {
-    console.error('Failed to start Dart MCP Server:', error);
+    // Always log critical errors
+    console.error('[dart-mcp] Failed to start server:', error);
     process.exit(1);
   }
 }

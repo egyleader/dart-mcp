@@ -4,19 +4,34 @@
   "description": "MCP server for Dart SDK commands",
   "main": "dist/index.js",
   "type": "module",
+  "bin": {
+    "dart-mcp-server": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": ["dart", "mcp", "codium", "windsurf", "cline"],
+  "files": [
+    "dist/**/*"
+  ],
+  "keywords": ["dart", "mcp", "codium", "windsurf", "cli", "modelcontextprotocol"],
   "author": "Ahmed Osama",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
-    "@types/node": "^22.13.9",
-    "typescript": "^5.8.2",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "typescript": "^5.8.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

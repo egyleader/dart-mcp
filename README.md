@@ -1,54 +1,74 @@
-# Dart MCP Server
+# Model Context Protocol (MCP) Server for Dart SDK
 
-A Model Context Protocol (MCP) server that exposes Dart SDK commands to Cline and Windsurf (Codium IDE). This tool bridges the gap between AI-powered coding assistants and Dart/Flutter development workflows.
+A distributable MCP server that exposes Dart SDK commands for AI-powered development. This server bridges the gap between AI coding assistants and Dart/Flutter development workflows by implementing the Model Context Protocol (MCP).
 
 ## Features
 
-This MCP server wraps the Dart SDK command-line tools and exposes them as MCP tools that can be used by any MCP client, including Cline and Windsurf. It supports the following Dart commands:
+This MCP server provides access to the following Dart SDK commands:
 
-- `dart analyze` - Analyze Dart code for errors, warnings, and lints
-- `dart compile` - Compile Dart to various formats (exe, AOT/JIT snapshots, JavaScript)
-- `dart create` - Create new Dart projects from templates
-- `dart doc` - Generate API documentation for Dart projects
-- `dart fix` - Apply automated fixes to Dart source code
-- `dart format` - Format Dart source code according to style guidelines
-- `dart info` - Show diagnostic information about the installed Dart tooling
-- `dart pub` - Work with packages (get, add, upgrade, outdated, etc.)
-- `dart run` - Run Dart programs with support for passing arguments
-- `dart test` - Run tests with support for filtering and reporting options
+- `dart-analyze` - Analyze Dart code for errors, warnings, and lints
+- `dart-compile` - Compile Dart to various formats (exe, AOT/JIT snapshots, JavaScript)
+- `dart-create` - Create new Dart projects from templates
+- `dart-doc` - Generate API documentation for Dart projects
+- `dart-fix` - Apply automated fixes to Dart source code
+- `dart-format` - Format Dart source code according to style guidelines
+- `dart-info` - Show diagnostic information about the installed Dart tooling
+- `dart-package` - Work with packages (get, add, upgrade, outdated, etc.)
+- `dart-run` - Run Dart programs with support for passing arguments
+- `dart-test` - Run tests with support for filtering and reporting options
 
-### Path Handling
+### Key Benefits
 
-This MCP server automatically converts relative paths to absolute paths, ensuring that commands work correctly regardless of the current working directory. The server:
-
-1. Attempts to resolve paths relative to the current working directory
-2. Checks against known project roots (automatically detected upon server start)
-3. Handles special cases for monorepo structures like paths starting with 'apps/'
-4. Supports cross-platform path resolution
+- **Intelligent Path Handling**: Automatically resolves relative paths to absolute paths
+- **Project Auto-Detection**: Identifies Dart/Flutter projects in common locations
+- **Cross-Platform Support**: Works on macOS, Linux, and Windows
+- **MCP Integration**: Compatible with any MCP client, including Windsurf and Cline
 
 ## Prerequisites
 
 - Node.js 18.x or higher
-- npm or pnpm (pnpm recommended)
 - Dart SDK (3.0 or higher) installed and available in your PATH
 
 ## Installation
 
-### As a development dependency
+### Using npx (recommended)
+
+The server can be run directly without installation using npx:
 
 ```bash
-# Using npm
-npm install dart_mcp --save-dev
-
-# Using pnpm (recommended)
-pnpm add dart_mcp -D
+npx @modelcontextprotocol/server-dart
 ```
 
-### From source
+### Global Installation
+
+For easier access, you can install the server globally:
+
+```bash
+npm install -g @modelcontextprotocol/server-dart
+```
+
+Then run it using:
+
+```bash
+dart-mcp-server
+```
+
+### From Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dart_mcp.git
+git clone https://github.com/modelcontextprotocol/dart-mcp.git
+cd dart-mcp
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Run the server
+node dist/index.js
+```
 cd dart_mcp
 
 # Install dependencies using pnpm
@@ -72,9 +92,11 @@ This starts the server in stdio mode, which can be used with MCP clients that su
 
 ### Configuration
 
-#### Windsurf (Codium IDE)
+### Configuration for MCP Clients
 
-Add the following to your `mcp_config.json`:
+#### Using the Published Package
+
+Add the following to your `mcp_config.json` to use the published npm package:
 
 ```json
 {
@@ -82,8 +104,41 @@ Add the following to your `mcp_config.json`:
     "dart": {
       "command": "npx",
       "args": [
-        "-y",
         "dart_mcp"
+      ]
+    }
+  }
+}
+```
+
+#### Using Package Installed in Project
+
+If you've installed the package in your project:
+
+```json
+{
+  "mcpServers": {
+    "dart": {
+      "command": "npx",
+      "args": [
+        "dart_mcp"
+      ]
+    }
+  }
+}
+```
+
+#### Using Specific Version
+
+To use a specific version of the package:
+
+```json
+{
+  "mcpServers": {
+    "dart": {
+      "command": "npx",
+      "args": [
+        "dart_mcp@1.0.0"
       ]
     }
   }
@@ -100,7 +155,7 @@ For developers working on the MCP server:
     "dart": {
       "command": "node",
       "args": [
-        "/path/to/dart_mcp/dist/index.js"
+        "${workspaceFolder}/dist/index.js"
       ]
     }
   }
