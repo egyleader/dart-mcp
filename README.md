@@ -1,33 +1,39 @@
-# Model Context Protocol (MCP) Server for Dart SDK
+# Dart MCP Server
 
-A distributable MCP server that exposes Dart SDK commands for AI-powered development. This server bridges the gap between AI coding assistants and Dart/Flutter development workflows by implementing the Model Context Protocol (MCP).
+[![npm version](https://img.shields.io/npm/v/@egyleader/dart-mcp-server.svg)](https://www.npmjs.com/package/@egyleader/dart-mcp-server)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+A distributable Model Context Protocol (MCP) server that exposes Dart SDK commands for AI-powered development. This server bridges the gap between AI coding assistants and Dart/Flutter development workflows by implementing the Model Context Protocol (MCP).
 
 ## Features
 
-This MCP server provides access to the following Dart SDK commands:
+This MCP server provides seamless access to the following Dart SDK commands:
 
-- `dart-analyze` - Analyze Dart code for errors, warnings, and lints
-- `dart-compile` - Compile Dart to various formats (exe, AOT/JIT snapshots, JavaScript)
-- `dart-create` - Create new Dart projects from templates
-- `dart-doc` - Generate API documentation for Dart projects
-- `dart-fix` - Apply automated fixes to Dart source code
-- `dart-format` - Format Dart source code according to style guidelines
-- `dart-info` - Show diagnostic information about the installed Dart tooling
-- `dart-package` - Work with packages (get, add, upgrade, outdated, etc.)
-- `dart-run` - Run Dart programs with support for passing arguments
-- `dart-test` - Run tests with support for filtering and reporting options
+| Command | Description |
+|---------|-------------|
+| `dart-analyze` | Analyze Dart code for errors, warnings, and lints |
+| `dart-compile` | Compile Dart to various formats (exe, AOT/JIT snapshots, JavaScript) |
+| `dart-create` | Create new Dart projects from templates |
+| `dart-doc` | Generate API documentation for Dart projects |
+| `dart-fix` | Apply automated fixes to Dart source code |
+| `dart-format` | Format Dart source code according to style guidelines |
+| `dart-info` | Show diagnostic information about the installed Dart tooling |
+| `dart-package` | Work with packages (get, add, upgrade, outdated, etc.) |
+| `dart-run` | Run Dart programs with support for passing arguments |
+| `dart-test` | Run tests with support for filtering and reporting options |
 
 ### Key Benefits
 
-- **Intelligent Path Handling**: Automatically resolves relative paths to absolute paths
-- **Project Auto-Detection**: Identifies Dart/Flutter projects in common locations
+- **Intelligent Path Handling**: Automatically resolves relative paths to absolute paths, ensuring commands work correctly regardless of working directory
+- **Project Auto-Detection**: Identifies Dart/Flutter projects in common locations like home directories and workspaces
 - **Cross-Platform Support**: Works on macOS, Linux, and Windows
-- **MCP Integration**: Compatible with any MCP client, including Windsurf and Cline
+- **Zero Configuration**: Works out of the box with sensible defaults
+- **MCP Integration**: Compatible with any MCP client, including Windsurf, Cline, and other Model Context Protocol implementations
 
 ## Prerequisites
 
-- Node.js 18.x or higher
-- Dart SDK (3.0 or higher) installed and available in your PATH
+- **Node.js**: 18.x or higher
+- **Dart SDK**: 3.0 or higher installed and available in your PATH
 
 ## Installation
 
@@ -36,7 +42,7 @@ This MCP server provides access to the following Dart SDK commands:
 The server can be run directly without installation using npx:
 
 ```bash
-npx @modelcontextprotocol/server-dart
+npx @egyleader/dart-mcp-server
 ```
 
 ### Global Installation
@@ -44,7 +50,7 @@ npx @modelcontextprotocol/server-dart
 For easier access, you can install the server globally:
 
 ```bash
-npm install -g @modelcontextprotocol/server-dart
+npm install -g @egyleader/dart-mcp-server
 ```
 
 Then run it using:
@@ -57,8 +63,8 @@ dart-mcp-server
 
 ```bash
 # Clone the repository
-git clone https://github.com/modelcontextprotocol/dart-mcp.git
-cd dart-mcp
+git clone https://github.com/egyleader/dart-mcp-server.git
+cd dart-mcp-server
 
 # Install dependencies
 npm install
@@ -69,34 +75,12 @@ npm run build
 # Run the server
 node dist/index.js
 ```
-cd dart_mcp
 
-# Install dependencies using pnpm
-pnpm install
+## Integration with MCP Clients
 
-# Build the project
-pnpm run build
-```
+### Windsurf / Codeium IDE Configuration
 
-## Usage
-
-### Standalone
-
-Run the MCP server directly:
-
-```bash
-pnpm start
-```
-
-This starts the server in stdio mode, which can be used with MCP clients that support stdio transport.
-
-### Configuration
-
-### Configuration for MCP Clients
-
-#### Using the Published Package
-
-Add the following to your `mcp_config.json` to use the published npm package:
+To use this MCP server with Windsurf or Codeium IDE, add the following to your `mcp_config.json` file (typically located at `~/.codeium/windsurf/mcp_config.json`):
 
 ```json
 {
@@ -104,63 +88,154 @@ Add the following to your `mcp_config.json` to use the published npm package:
     "dart": {
       "command": "npx",
       "args": [
-        "dart_mcp"
+        "-y",
+        "@egyleader/dart-mcp-server"
       ]
     }
   }
 }
 ```
 
-#### Using Package Installed in Project
+### Environment Variables
 
-If you've installed the package in your project:
+- `DART_MCP_VERBOSE`: Set to any value to enable verbose logging for debugging
+
+## MCP Tool Usage Examples
+
+Here are examples of how to use the MCP tools provided by the server. These examples show the parameters that can be passed to each tool.
+
+### dart-analyze
+
+Analyze Dart code for errors, warnings, and lints:
 
 ```json
 {
-  "mcpServers": {
-    "dart": {
-      "command": "npx",
-      "args": [
-        "dart_mcp"
-      ]
-    }
-  }
+  "path": "lib/main.dart",
+  "options": ["--fatal-infos", "--fatal-warnings"]
 }
 ```
 
-#### Using Specific Version
+### dart-compile
 
-To use a specific version of the package:
+Compile Dart code to various formats:
 
 ```json
 {
-  "mcpServers": {
-    "dart": {
-      "command": "npx",
-      "args": [
-        "dart_mcp@1.0.0"
-      ]
-    }
-  }
+  "path": "lib/main.dart",
+  "format": "exe",
+  "output": "build/app",
+  "options": ["--verbose"]
 }
 ```
 
-#### Local Development Setup
+Supported formats: `exe`, `aot-snapshot`, `jit-snapshot`, `kernel`, `js`
 
-For developers working on the MCP server:
+### dart-create
+
+Create a new Dart project from a template:
 
 ```json
 {
-  "mcpServers": {
-    "dart": {
-      "command": "node",
-      "args": [
-        "${workspaceFolder}/dist/index.js"
-      ]
-    }
-  }
+  "projectName": "my_awesome_app",
+  "template": "console",
+  "output": "projects",
+  "options": ["--force"]
 }
 ```
+
+Supported templates: `console`, `package`, `server-shelf`, `web`
+
+### dart-doc
+
+Generate API documentation for a Dart project:
+
+```json
+{
+  "path": ".",
+  "output": "doc",
+  "options": ["--exclude", "lib/generated"]
+}
+```
+
+### dart-fix
+
+Apply automated fixes to Dart source code:
+
+```json
+{
+  "path": "lib",
+  "apply": true,
+  "options": ["--pedantic"]
+}
+```
+
+### dart-format
+
+Format Dart source code according to style guidelines:
+
+```json
+{
+  "paths": ["lib/main.dart", "lib/models"],
+  "setExitIfChanged": true,
+  "options": ["--line-length=100"]
+}
+```
+
+### dart-info
+
+Show diagnostic information about the installed Dart tooling:
+
+```json
+{
+  "options": ["--verbose"]
+}
+```
+
+### dart-package
+
+Work with packages (pub commands):
+
+```json
+{
+  "command": "get",
+  "workingDir": ".",
+  "args": ["--offline"]
+}
+```
+
+Supported commands: `get`, `upgrade`, `outdated`, `add`, `remove`, `publish`, `deps`, `downgrade`, `cache`, `run`, `global`
+
+### dart-run
+
+Run Dart programs with support for passing arguments:
+
+```json
+{
+  "script": "bin/server.dart",
+  "workingDir": ".",
+  "args": ["--port=8080", "--mode=production"]
+}
+```
+
+### dart-test
+
+Run tests with support for filtering and reporting options:
+
+```json
+{
+  "path": "test",
+  "workingDir": ".",
+  "options": ["--name=login", "--platform=chrome"]
+}
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Tool API Reference
 

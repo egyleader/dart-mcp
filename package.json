@@ -1,5 +1,5 @@
 {
-  "name": "dart_mcp",
+  "name": "@egyleader/dart-mcp-server",
   "version": "1.0.0",
   "description": "MCP server for Dart SDK commands",
   "main": "dist/index.js",
