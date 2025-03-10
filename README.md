@@ -138,10 +138,15 @@ Create a new Dart project from a template:
 {
   "projectName": "my_awesome_app",
   "template": "console",
-  "output": "projects",
+  "output": "projects/my_awesome_app",
   "options": ["--force"]
 }
 ```
+
+**Note on projectName and output:**
+- If only `projectName` is provided, it's used as the directory name where the project is created.
+- If `output` is provided, it's used as the directory where the project is created.
+- The actual package/project name in Dart is derived from the final directory name by the Dart CLI.
 
 Supported templates: `console`, `package`, `server-shelf`, `web`
 
@@ -293,12 +298,17 @@ Create a new Dart project.
 }
 ```
 
+**Note:**
+- If `output` is provided, the project will be created in that directory.
+- If only `projectName` is provided, it will be used as the directory name.
+- The actual Dart package name is derived from the final directory name.
+
 **Example:**
 ```typescript
 {
   template: "package",
   projectName: "my_dart_library",
-  output: "projects"
+  output: "projects/my_dart_library"
 }
 ```
 

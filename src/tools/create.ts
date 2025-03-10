@@ -13,16 +13,26 @@ export const createSchema = z.object({
 export async function create(args: z.infer<typeof createSchema>) {
   const { template, projectName, output, options = [] } = args;
   
-  // Convert relative output path to absolute path if provided
-  const absoluteOutput = output ? toAbsolutePath(output) : undefined;
+  // If output is provided, use it as the target directory
+  // Otherwise, use projectName as both the target directory and the package name
+  const targetDir = output || projectName;
+  
+  // Convert relative path to absolute path
+  const absoluteTargetDir = toAbsolutePath(targetDir);
+  
+  // When output and projectName are both provided, we might want to use
+  // projectName to name the package but create it in the output directory.
+  // However, the Dart CLI doesn't have a separate flag for this.
+  // The project name will be derived from the directory name.
   
   const cmdArgs = [
-    template,
-    projectName,
-    ...(absoluteOutput ? ['--output', absoluteOutput] : []),
-    ...options
+    '-t', template,
+    ...options,
+    // Use the target directory as the positional argument
+    absoluteTargetDir
   ];
   
+  console.log(`Creating Dart project with template '${template}' in directory: ${absoluteTargetDir}`);
   const { stdout, stderr } = await executeDartCommand('create', cmdArgs);
   
   return {
