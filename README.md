@@ -5,6 +5,10 @@
 
 A distributable Model Context Protocol (MCP) server that exposes Dart SDK commands for AI-powered development. This server bridges the gap between AI coding assistants and Dart/Flutter development workflows by implementing the Model Context Protocol (MCP).
 
+<a href="https://glama.ai/mcp/servers/vuwii9l5gu">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/vuwii9l5gu/badge" alt="Dart Server MCP server" />
+</a>
+
 ## Features
 
 This MCP server provides seamless access to the following Dart SDK commands:
