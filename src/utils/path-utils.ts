@@ -35,32 +35,16 @@ export function toAbsolutePath(filePath: string, workingDir?: string): string {
   const isVerbose = process.env.DART_MCP_VERBOSE === 'true';
   const cwd = workingDir || process.cwd();
   
-  // If the path is already absolute and exists, return it
-  if (path.isAbsolute(filePath) && pathExists(filePath)) {
+  // If the path is already absolute, return it regardless of existence
+  if (path.isAbsolute(filePath)) {
     if (isVerbose) console.error(`[dart-mcp] Using absolute path: ${filePath}`);
     return filePath;
   }
   
-  // Try to resolve against the current working directory first
-  const cwdPath = path.resolve(cwd, filePath);
-  if (pathExists(cwdPath)) {
-    if (isVerbose) console.error(`[dart-mcp] Resolved path against CWD: ${cwdPath}`);
-    return cwdPath;
-  }
-  
-  // Try to find the path in known project roots
-  for (const projectRoot of PROJECT_ROOTS) {
-    const projectPath = path.resolve(projectRoot, filePath);
-    if (pathExists(projectPath)) {
-      if (isVerbose) console.error(`[dart-mcp] Resolved path against project root: ${projectPath}`);
-      return projectPath;
-    }
-  }
-  
-  // If we still haven't found a valid path, return the resolved path against CWD
-  // This might not exist, but it's the best we can do
-  if (isVerbose) console.error(`[dart-mcp] No existing path found, using: ${cwdPath}`);
-  return cwdPath;
+  // For relative paths, always resolve against cwd
+  const resolvedPath = path.resolve(cwd, filePath);
+  if (isVerbose) console.error(`[dart-mcp] Resolved relative path: ${filePath} → ${resolvedPath}`);
+  return resolvedPath;
 }
 
 /**
