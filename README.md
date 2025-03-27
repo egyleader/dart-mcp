@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@egyleader/dart-mcp-server.svg)](https://www.npmjs.com/package/@egyleader/dart-mcp-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![smithery badge](https://smithery.ai/badge/@egyleader/dart-mcp)](https://smithery.ai/server/@egyleader/dart-mcp)
 
 A distributable Model Context Protocol (MCP) server that exposes Dart SDK commands for AI-powered development. This server bridges the gap between AI coding assistants and Dart/Flutter development workflows by implementing the Model Context Protocol (MCP).
 
@@ -40,6 +41,14 @@ This MCP server provides seamless access to the following Dart SDK commands:
 - **Dart SDK**: 3.0 or higher installed and available in your PATH
 
 ## Installation
+
+### Installing via Smithery
+
+To install Dart MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@egyleader/dart-mcp):
+
+```bash
+npx -y @smithery/cli install @egyleader/dart-mcp --client claude
+```
 
 ### Using npx (recommended)
 
